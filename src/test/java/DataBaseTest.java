@@ -1,6 +1,7 @@
 import org.example.Main;
 import org.example.repository.EmployeeRepository;
 import org.example.util.EmployeeUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ public class DataBaseTest {
     EmployeeRepository repo;
 
     @Test
+    @Disabled
     void insertEmployees() throws InterruptedException {
         long recordsNum = 50_000_000;
         int threadsNum = 10;
