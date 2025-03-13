@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01.add-employees-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: employees1
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    unique: true
+              - column:
+                  name: name
+                  type: text
+              - column:
+                  name: salary
+                  type: int8
+              - column:
+                  name: age
+                  type: int4
+              - column:
+                  name: sex
+                  type: text
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: NOW()
