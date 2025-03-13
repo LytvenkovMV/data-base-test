@@ -18,12 +18,6 @@ public class EmployeeUtil {
     private static final Map<Boolean, List<String>> SURNAMES_MAP = Map.of(
             true, Surnames.MALE,
             false, Surnames.FEMALE);
-    private static final Map<Boolean, Integer> NAMES_LENGTH_MAP = Map.of(
-            true, Names.MALE.size(),
-            false, Names.FEMALE.size());
-    private static final Map<Boolean, Integer> SURNAMES_LENGTH_MAP = Map.of(
-            true, Surnames.MALE.size(),
-            false, Surnames.FEMALE.size());
 
     public static Employee nextFakeEmployee() {
         int age = ThreadLocalRandom.current().nextInt(AGE_RANGE.min, AGE_RANGE.max + 1);
@@ -31,10 +25,10 @@ public class EmployeeUtil {
 
         boolean isMale = ThreadLocalRandom.current().nextBoolean();
 
-        int nameIndex = ThreadLocalRandom.current().nextInt(0, NAMES_LENGTH_MAP.get(isMale));
+        int nameIndex = ThreadLocalRandom.current().nextInt(0, NAMES_MAP.get(isMale).size());
         String name = NAMES_MAP.get(isMale).get(nameIndex);
 
-        int surnameIndex = ThreadLocalRandom.current().nextInt(0, SURNAMES_LENGTH_MAP.get(isMale));
+        int surnameIndex = ThreadLocalRandom.current().nextInt(0, SURNAMES_MAP.get(isMale).size());
         String surname = SURNAMES_MAP.get(isMale).get(surnameIndex);
 
         Employee employee = new Employee();
