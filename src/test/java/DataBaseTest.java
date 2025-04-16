@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 @SpringBootTest(classes = Main.class)
 @Slf4j
 public class DataBaseTest {
-    long recordsNum = 1_000_000;
+    long recordsNum = 50_000_000;
     int threadsNum = 10;
     long recordsForThreadNum = recordsNum / threadsNum;
     ExecutorService threadsPool = Executors.newFixedThreadPool(threadsNum);
