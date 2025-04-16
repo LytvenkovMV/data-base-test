@@ -1,49 +1,45 @@
+import lombok.extern.slf4j.Slf4j;
 import org.example.Main;
 import org.example.repository.EmployeeRepository;
 import org.example.util.EmployeeUtil;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 @SpringBootTest(classes = Main.class)
+@Slf4j
 public class DataBaseTest {
+    long recordsNum = 1_000_000;
+    int threadsNum = 10;
+    long recordsForThreadNum = recordsNum / threadsNum;
+    ExecutorService threadsPool = Executors.newFixedThreadPool(threadsNum);
 
     @Autowired
     EmployeeRepository repo;
 
     @Test
-    @Disabled
-    void insertEmployees() throws InterruptedException {
-        long recordsNum = 50_000_000;
-        int threadsNum = 10;
-        long recordsForThreadNum = recordsNum / threadsNum;
-
-        ExecutorService exec = Executors.newFixedThreadPool(threadsNum);
-
-        Runnable task = () -> {
-            for (int i = 0; i < recordsForThreadNum; i++) {
-                repo.save(EmployeeUtil.nextFakeEmployee());
-            }
-        };
-
+    void insertEmployees() {
         long start = System.nanoTime();
 
-        for (int i = 0; i < threadsNum; i++) {
-            exec.submit(task);
-        }
+        CompletableFuture<?>[] futures = IntStream.range(0, threadsNum)
+                .mapToObj(next -> CompletableFuture.runAsync(() -> {
+                    log.info("Задача №{} начала работу", next);
 
-        exec.shutdown();
+                    for (int i = 0; i < recordsForThreadNum; i++) {
+                        repo.save(EmployeeUtil.nextFakeEmployee());
+                    }
+                    log.info("Задача №{} завершена", next);
+                }, threadsPool))
+                .toArray(CompletableFuture[]::new);
 
-        while (!exec.awaitTermination(30, TimeUnit.MINUTES)) {
-
-        }
+        CompletableFuture.allOf(futures).join();
 
         long stop = System.nanoTime();
-        System.out.println("Время выполнения " + ((float) (stop - start)) / 1000_000_000 + "с");
+        log.info("Время выполнения всех задач {} с", ((float) (stop - start)) / 1000_000_000);
     }
 }
